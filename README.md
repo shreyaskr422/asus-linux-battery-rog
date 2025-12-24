@@ -2,7 +2,6 @@
 
 Quick setup for power management and hardware control on ASUS ROG/TUF laptops.
 
----
 
 ### 1. Power Management (TLP)
 Edit `/etc/tlp.conf` for battery health:
