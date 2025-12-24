@@ -3,30 +3,21 @@ packages and settings for asus laptops on arch linux
 
 
 **1. tlp and tlp-rdw** - *for power settings*
-
 As for config for tlp you find in /etc/tlp.conf
-
-*uncomment these lines*
-
 
 START_CHARGE_THRESH_BAT0=75     --*at this point, battery will start charging*
 
 STOP_CHARGE_THRESH_BAT0=80      --*at this point, battery will stop charging*
 
-
 *Then*
-
 **sudo tlp start**
 
 **sudo systemctl restart tlp**
 
 **sudo tlp-stat -s**
 
-
-
 **2. asusctl  & supergfxctl**   *allows ROG & TUF laptop owners to control their laptops from a CLI*
 
- 
  
  **sudo systemctl enable --now asusd.service**
 
