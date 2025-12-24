@@ -1,108 +1,87 @@
-# asus_laptop_arch_linux
-packages and settings for asus laptops on arch linux
+This is a cleaned-up, professional version of your README. It removes redundancies and organizes the technical steps logically.
 
+---
 
-**1. tlp and tlp-rdw** - *for power settings*
-As for config for tlp you find in /etc/tlp.conf
+# ASUS Laptop Setup for Arch Linux
 
-START_CHARGE_THRESH_BAT0=75     --*at this point, battery will start charging*
+A concise guide to power management and hardware control for ASUS ROG and TUF laptops on Arch Linux.
 
-STOP_CHARGE_THRESH_BAT0=80      --*at this point, battery will stop charging*
+## 1. Power Management (TLP)
+Optimize battery life and set charging thresholds.
 
-*Then*
-**sudo tlp start**
+**Configuration:** Edit `/etc/tlp.conf` to set charging limits (e.g., to prolong battery health):
+```bash
+START_CHARGE_THRESH_BAT0=75
+STOP_CHARGE_THRESH_BAT0=80
+```
 
-**sudo systemctl restart tlp**
+**Commands:**
+```bash
+sudo tlp start              # Start TLP
+sudo systemctl enable tlp   # Enable on boot
+sudo tlp-stat -s            # Check status
+```
 
-**sudo tlp-stat -s**
+---
 
-**2. asusctl  & supergfxctl**   *allows ROG & TUF laptop owners to control their laptops from a CLI*
+## 2. ASUS & Graphics Control
+Utilities for keyboard backlighting, fan profiles, and GPU switching.
 
- 
- **sudo systemctl enable --now asusd.service**
+### Enable Services
+```bash
+sudo systemctl enable --now asusd.service
+sudo systemctl enable --now supergfxd.service
+```
 
- **sudo systemctl enable --now supergfxd.service**
- 
- **sudo systemctl enable --now asusd.service**
+### Kernel Modules
+Ensure the necessary ASUS WMI modules are loaded:
+```bash
+# Check if loaded
+lsmod | grep asus
 
- 
- 
- **lsmod | grep asus**                        --for checking asus_nb_wmi and asus-wmi is enabled or not
- 
- **sudo modprobe asus_nb_wmi**         --if Not then enable it                                         
- 
- **sudo modprobe asus_wmi**
- 
- 
- 
- **echo "asus_nb_wmi" | sudo tee -a /etc/modules-load.d/asus.conf**   --recheck it          
- 
- **echo "asus_wmi" | sudo tee -a /etc/modules-load.d/asus.conf**
+# If missing, load them manually
+sudo modprobe asus_nb_wmi
+sudo modprobe asus_wmi
 
+# Make changes permanent
+echo -e "asus_nb_wmi\nasus_wmi" | sudo tee /etc/modules-load.d/asus.conf
+```
 
+---
 
-#for setting up the asusctl and supergfxctl 
- 
- **asusctl**
- 
- **asusctl -k auto**
+## 3. Usage & Modes
 
+### Keyboard & Profiles (`asusctl`)
+*   `asusctl` — View help and available modes.
+*   `asusctl -k auto` — Set keyboard brightness to auto.
+*   `asusctl aura static` — Set a static color for the keyboard backlight.
 
- 
- **supergfxctl**
- 
- **supergfxctl -m Hybrid**
+### GPU Switching (`supergfxctl`)
+Switch between integrated and dedicated graphics:
 
- 
- 
- #For checking the the services are working or not if not then reload daemon 
- 
- **lsusb**
- 
- **Bus 001 Device 002: ID 0b05:1866 ASUSTek Computer, Inc. N-KEY Device**
- 
- **sudo  systemctl daemon-reload && systemctl restart asusd**
+| Mode | Description |
+| :--- | :--- |
+| `Integrated` | iGPU only. Best for battery life. |
+| `Hybrid` | Default. Uses iGPU, switches to dGPU when needed. |
+| `Dedicated` | dGPU only. Best for performance/gaming. |
+| `VFIO` | Passes the dGPU to a Virtual Machine (QEMU/KVM). |
 
+**Command:** `supergfxctl -m <mode>`
 
+---
 
+## 4. GUI Interface
+For a visual control center, install the **ROG Control Center** from the AUR:
 
+```bash
+# Example using yay
+yay -S rog-control-center
+```
 
-NOW COMES THE GOOD PART 
-
- **asusctl**                   *use this for modes and help*
- 
- **asusctl aura static**       *this command is for the aura static settings you have in windows 11 or 10 whatever*
-
-
-
-
-AND FOR SUPERGFXCTL 
-
-**supergfxctl**               *use this command for also modes and options*
-
-
-common used modes  -->
-
-
-**supergfxctl -m Integrated**       *only igpu(amd or intel) and not dedicated gpu (nvidia or amd) mostly for battery*
-
-**supergfxctl -m Hybrid**           *both igpu and dedicated gpu it gonna select according to use*
-
-
-**supergfxctl -m VFIO**             *For bypass for vm mostly used for qmeu and virt-manager for tuning for vm*
-
-
-**supergfxctl -m Dedicated**        *only dedicated gpu (nvidia or amd) and not igpu (amd or intel)*
-
-
-
-
-
-*********FOR GUI CONTROL FROM ASUS CONTROL INSTALL ( rog-control-center ) FROM AUR MULTI REPO*********
-
-
-
-
-
-
- 
+## Troubleshooting
+If services are unresponsive:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart asusd
+```
+Verify hardware detection with `lsusb` (Look for `ASUSTek Computer, Inc. N-KEY Device`).
