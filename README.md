@@ -1,4 +1,3 @@
----
 
 # ASUS Laptop Setup for Arch Linux
 
