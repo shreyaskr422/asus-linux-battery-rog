@@ -1,5 +1,3 @@
-This is a cleaned-up, professional version of your README. It removes redundancies and organizes the technical steps logically.
-
 ---
 
 # ASUS Laptop Setup for Arch Linux
